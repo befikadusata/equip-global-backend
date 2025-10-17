@@ -8,11 +8,11 @@
     "build": "echo 'Build step handled by Vercel'"
   },
   "dependencies": {
-    "googleapis": "^126.0.1"
+    "googleapis": "^126.0.1",
+    "@vercel/node": "^3.0.15",
+    "typescript": "^5.5.3"
   },
-  "devDependencies": {
-    "@vercel/node": "^3.0.15"
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">=18"
   }

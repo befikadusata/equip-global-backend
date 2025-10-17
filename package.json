@@ -1,0 +1,19 @@
+{
+  "name": "equip-global-backend",
+  "version": "1.0.0",
+  "description": "Backend serverless functions for Equip Global website",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build step handled by Vercel'"
+  },
+  "dependencies": {
+    "googleapis": "^126.0.1"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.15"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

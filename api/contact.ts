@@ -64,21 +64,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             .trim()
             .replace(/\\n/g, '\n')
             .replace(/\\r/g, '\r')
-            .replace(/\\r\\n/g, '\n')
-            .replace(/-----BEGIN PRIVATE KEY-----\n?/, '-----BEGIN PRIVATE KEY-----\n')
-            .replace(/-----END PRIVATE KEY-----\n?/, '\n-----END PRIVATE KEY-----'),
+            .replace(/\\r\\n/g, '\n'),
         },
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
       });
-      
-      // Test the authentication by getting the client
-      await auth.getClient();
-      console.log('Authentication successful');
     } catch (authError) {
-      console.error('Authentication failed:', authError instanceof Error ? authError.message : authError);
+      console.error('Authentication setup failed:', authError instanceof Error ? authError.message : authError);
       return res.status(500).json({
-        message: 'Authentication error',
-        error: `Failed to authenticate with Google: ${authError instanceof Error ? authError.message : String(authError)}`
+        message: 'Authentication setup error',
+        error: `Failed to setup authentication with Google: ${authError instanceof Error ? authError.message : String(authError)}`
       });
     }
 

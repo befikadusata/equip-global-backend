@@ -40,6 +40,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const privateKey = process.env.GOOGLE_PRIVATE_KEY;
     const sheetId = process.env.GOOGLE_SHEET_ID;
 
+    console.log('Environment variables check:', {
+      hasEmail: !!serviceAccountEmail,
+      hasKey: !!privateKey,
+      hasSheetId: !!sheetId,
+      sheetId: sheetId // Log sheet ID to check if it's correct
+    });
+
     if (!serviceAccountEmail || !privateKey || !sheetId) {
       console.error('Missing required environment variables for Google Sheets API');
       return res.status(500).json({ 
@@ -48,15 +55,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Set up Google Sheets authentication using service account
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: serviceAccountEmail,
-        private_key: privateKey
-          .replace(/\\n/g, '\n')
-          .replace(/\\r/g, '\r'),
-      },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
+    let auth;
+    try {
+      auth = new google.auth.GoogleAuth({
+        credentials: {
+          client_email: serviceAccountEmail,
+          private_key: privateKey
+            .replace(/\\n/g, '\n')
+            .replace(/\\r/g, '\r'),
+        },
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      });
+      
+      // Test the authentication by getting the client
+      await auth.getClient();
+      console.log('Authentication successful');
+    } catch (authError) {
+      console.error('Authentication failed:', authError instanceof Error ? authError.message : authError);
+      return res.status(500).json({
+        message: 'Authentication error',
+        error: `Failed to authenticate with Google: ${authError instanceof Error ? authError.message : String(authError)}`
+      });
+    }
 
     const sheets = google.sheets({ version: 'v4', auth });
 

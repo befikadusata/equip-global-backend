@@ -1,5 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { google } from 'googleapis';
+import { normalizePrivateKey } from '../utils/key-normalizer';
 
 // Environment variables should contain:
 // GOOGLE_SERVICE_ACCOUNT_EMAIL: Service account email
@@ -60,7 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       auth = new google.auth.GoogleAuth({
         credentials: {
           client_email: serviceAccountEmail,
-          private_key: Buffer.from(privateKey, 'utf8').toString(),
+          private_key: normalizePrivateKey(privateKey),
         },
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
       });

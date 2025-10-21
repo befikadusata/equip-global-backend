@@ -35,11 +35,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    // Validate required environment variables
+    const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    const sheetId = process.env.GOOGLE_SHEET_ID;
+
+    if (!serviceAccountEmail || !privateKey || !sheetId) {
+      console.error('Missing required environment variables for Google Sheets API');
+      return res.status(500).json({ 
+        message: 'Server configuration error: Missing required environment variables' 
+      });
+    }
+
     // Set up Google Sheets authentication using service account
     const auth = new google.auth.GoogleAuth({
       credentials: {
-        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        client_email: serviceAccountEmail,
+        private_key: privateKey
+          .replace(/\\n/g, '\n')
+          .replace(/\\r/g, '\r'),
       },
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
@@ -48,7 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Append the form data to the Google Sheet
     const response = await sheets.spreadsheets.values.append({
-      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      spreadsheetId: sheetId,
       range: 'Donations!A1', // Adjust the sheet name and range as needed for donations
       valueInputOption: 'USER_ENTERED',
       requestBody: {

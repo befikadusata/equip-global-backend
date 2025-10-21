@@ -7,6 +7,10 @@ import { google } from 'googleapis';
 // GOOGLE_SHEET_ID: The ID of your Google Sheet
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method === 'OPTIONS') {
+    return res.status(200).send('OK');
+  }
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }

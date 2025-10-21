@@ -60,11 +60,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       auth = new google.auth.GoogleAuth({
         credentials: {
           client_email: serviceAccountEmail,
-          private_key: privateKey
-            .trim()
-            .replace(/\\n/g, '\n')
-            .replace(/\\r/g, '\r')
-            .replace(/\\r\\n/g, '\n'),
+          private_key: privateKey.includes('\\n') 
+            ? privateKey.replace(/\\n/g, '\n').replace(/\\r/g, '\r')
+            : privateKey,
         },
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
       });

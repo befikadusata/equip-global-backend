@@ -64,8 +64,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     res.status(200).json({ 
-      message: 'Donation form submitted successfully', 
-      range: response.data.range 
+      message: 'Donation form submitted successfully' 
     });
   } catch (error) {
     console.error('Error submitting donation form to Google Sheets:', error);

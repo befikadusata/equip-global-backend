@@ -64,8 +64,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     res.status(200).json({ 
-      message: 'Form submitted successfully', 
-      range: response.data.range 
+      message: 'Form submitted successfully' 
     });
   } catch (error) {
     console.error('Error submitting form to Google Sheets:', error);

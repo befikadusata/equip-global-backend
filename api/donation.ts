@@ -81,14 +81,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     });
 
+    console.log('Successfully appended donation data to Google Sheet:', response.data);
     res.status(200).json({ 
       message: 'Donation form submitted successfully' 
     });
   } catch (error) {
-    console.error('Error submitting donation form to Google Sheets:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+    });
+    
+    // Provide more specific error information
+    let errorMessage = 'Error submitting donation form';
+    if (error instanceof Error) {
+      errorMessage = `Error: ${error.message}`;
+      if (error.message.includes('access')) {
+        errorMessage += ' (Possible authentication or permission issue)';
+      } else if (error.message.includes('sheet')) {
+        errorMessage += ' (Possible sheet ID or range issue)';
+      }
+    }
+    
     res.status(500).json({ 
       message: 'Error submitting donation form', 
-      error: error instanceof Error ? error.message : String(error) 
+      error: errorMessage,
+      debug: process.env.NODE_ENV !== 'production' ? (error instanceof Error ? error.message : String(error)) : undefined
     });
   }
 }
